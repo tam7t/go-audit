@@ -8,7 +8,7 @@ bin: vendor-sync
 	$(dock) go build
 
 docker: bin
-	docker build -t go-audit .
+	docker build -t tam7t/go-audit .
 
 test:
 	govendor sync
