@@ -1,6 +1,14 @@
-bin:
-	govendor sync
-	go build
+dock := docker run -it --rm --user `id -u` -v `pwd`:/go/src/github.com/slackhq/go-audit -w /go/src/github.com/slackhq/go-audit golang:1.7
+vend := docker run -it --rm --user `id -u` -v `pwd`:/go/src/github.com/slackhq/go-audit -w /go/src/github.com/slackhq/go-audit trifs/govendor
+
+vendor-sync:
+	$(vend) sync
+
+bin: vendor-sync
+	$(dock) go build
+
+docker: bin
+	docker build -t go-audit .
 
 test:
 	govendor sync
@@ -21,5 +29,5 @@ bench-cpu-long:
 	go test -bench=. -benchtime=60s -cpuprofile=cpu.pprof
 	go tool pprof go-audit.test cpu.pprof
 
-.PHONY: test test-cov-html bench bench-cpu bench-cpu-long bin
+.PHONY: test test-cov-html bench bench-cpu bench-cpu-long bin vendor-sync docker
 .DEFAULT_GOAL := bin
