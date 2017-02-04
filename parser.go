@@ -9,10 +9,11 @@ import (
 	"time"
 )
 
+const headerEndChar = byte(')')
+const headerSepChar = byte(':')
+const spaceChar = byte(' ')
+
 var uidMap = map[string]string{}
-var headerEndChar = []byte{")"[0]}
-var headerSepChar = byte(':')
-var spaceChar = byte(' ')
 
 const (
 	HEADER_MIN_LENGTH = 7               // Minimum length of an audit header
@@ -64,7 +65,7 @@ func NewAuditMessage(nlm *syscall.NetlinkMessage) *AuditMessage {
 
 // Gets the timestamp and audit sequence id from a netlink message
 func parseAuditHeader(msg *syscall.NetlinkMessage) (time string, seq int) {
-	headerStop := bytes.Index(msg.Data, headerEndChar)
+	headerStop := bytes.IndexByte(msg.Data, headerEndChar)
 	// If the position the header appears to stop is less than the minimum length of a header, bail out
 	if headerStop < HEADER_MIN_LENGTH {
 		return
